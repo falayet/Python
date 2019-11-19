@@ -1,0 +1,46 @@
+import requests
+url = 'https://www.python.org/static/img/python-logo@2x.png'
+myfile = requests.get(url)
+open('c:/users/LikeGeeks/downloads/PythonImage.png', 'wb').write(myfile.content)
+
+......................................................................................
+#Download from googledrive
+
+pip install googledrivedownloader #installation
+
+from google_drive_downloader import GoogleDriveDownloader as gd
+gd.download_file_from_google_drive(file_id='0B7XV2PwnZyfNalJ6cFd6dXBrckE',
+dest_path='./data/2ndHalfJava.zip', unzip=True)
+
+.......................................................................................
+#Download from AWS S3
+
+pip install awscli
+aws configure
+#Enter AWS details
+AWS Access Key ID [None]: (The access key)
+AWS Secret Access Key [None]: (Secret access key)
+Default region name [None]: (Region)
+Default output format [None]: (Json)
+
+pip install boto3
+import boto3, botocore
+
+bucket = "bucketName"
+file_name = "filename"
+downloaded_file = "downloadedfilename" #name of file after it has downloaded
+
+........................................................................................
+#Download video from Youtube
+
+pip install pytube
+from pytube import YouTube
+
+YouTube('https://www.youtube.com/watch?v=himEMfYQJ1w').streams.first().download() #streams the first format from the list
+
+streams = yt.streams.all() #prints all available format
+>>> for x in streams:
+    print(x)
+    
+video = YouTube('https://www.youtube.com/watch?v=himEMfYQJ1w')
+>>> video.title #gets the title of the video
