@@ -1,0 +1,46 @@
+import arcpy
+import os
+
+vG = arcpy.GetParameterAsText(0)
+if vG == '#' or not vG:vG = "G:\\" # provide a default value if unspecified
+
+vTest = arcpy.GetParameterAsText(1)
+if vTest == '#' or not vTest:vTest = "Test" # provide a default value if
+
+arcpy.CreateFolder_management("G:\\", "Test")
+
+...............................................................................................
+root_path = "G:\\"
+Test = rootpath
+
+arcpy.CreateFolder_management(root_path, "Test")
+
+root_path1 = "G:/Test"
+folders1 = ["Documents", "Scratch", "Tool_Data", "Script", "Graphics", "Data"]
+fdr1 = folders1
+print fdr1
+for folder in fdr1:os.mkdir(os.path.join(root_path1,folder))
+
+root_path2 = "G:/Test/Data"
+folders2 = ["Vector", "Raster"]
+fdr2 = folders2
+print fdr2
+for folder in fdr2:os.mkdir(os.path.join(root_path2,folder))
+
+root_path3 = "G:/Test/Scratch"
+folders3 = ["Vector", "Raster"]
+fdr3 = folders3
+print fdr3
+for folder in fdr3:os.mkdir(os.path.join(root_path3,folder))
+
+arcpy.CreateFileGDB_management("G:/Test/Data/Vector", "Hot1.gdb")
+arcpy.CreateFileGDB_management("G:/Test/Scratch/Vector", "Hot2.gdb")
+
+out_dataset1 = "G:/Test/Data/Vector/Hot1.gdb"
+out_dataset2 = "G:/Test/Scratch/Vector/Hot2.gdb"
+sr = arcpy.SpatialReference("G:/RSMS Workfolio/Modules/Spatial Data/IOM_TA-Spr_Falaye/Data/Source/Vector/Observation_Points.prj")
+
+fdList = ["PHYS", "BND", "HYDRO", "TRANS", "MISC", "IND", "POP", "VEG", "MSDS"]
+for fd in fdList:arcpy.CreateFeatureDataset_management(out_dataset1, fd, sr)
+
+arcpy.CreateFeatureDataset_management(out_dataset2, "Misc", sr)
