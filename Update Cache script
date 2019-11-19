@@ -1,0 +1,52 @@
+#Name: UpdateCacheScript.py
+#Description: This script is used to demonstrate the automation of
+#             map cache creation. It works specifically with the "NapervilleBasemap"
+#             service. Prior to running this script you MUST copy a valid ArcGIS for Server 
+#             local connection file to "C:\appropriatefilepath" and rename it "NapervilleServer".
+#
+#             This script takes NO parameters because it is designed to be called as part
+#             of a Windows Task Scheduler task.
+
+
+#Import system modules
+import arcpy, os
+import sys, traceback, time, string, datetime
+
+#Variables used as input parameters to the
+#Manage Map Server Cache Tiles tool
+connectionFile = r"C:\Student\AGSA\Caching\NapervilleServer"
+serviceName = "NapervilleBasemap.MapServer"
+inputService = "{0}\\{1}".format(connectionFile, serviceName)
+scales = [144447.638572, 72223.819286, 36111.909643, 18055.954822, 9027.977411, 4513.988705]
+numOfCachingServiceInstances = 4
+updateMode = "RECREATE_ALL_TILES"
+areaOfInterest = ""
+waitForJobCompletion = "WAIT"
+updateExtents = ""
+
+#Open a text file that will house the output report
+currentTime = datetime.datetime.now()
+time = currentTime.strftime("%m-%d-%Y_%H.%M")
+file = r"C:/Student/AGSA/Caching/CacheUpdate_{0}.txt".format(time)
+report = open(file, 'w')
+
+try:
+    #Run cache creation/update tool with the desired parameters
+    print 'Beginning UpdateCache at: {}\n\tBuild may take some time, please wait...\n'.format(time)
+    result = arcpy.ManageMapServerCacheTiles_server(inputService, scales,
+                                           updateMode,
+                                           numOfCachingServiceInstances,
+                                           areaOfInterest, updateExtents,
+                                           waitForJobCompletion)
+    report.write("UpdateCache script executed successfully\n")
+    report.write(str(result.getMessages()))
+    print("UpdateCache script executed sucessfully\n\tSee log file: {}\n".format(file))
+    
+    #If a runtime error (exception) is detected report the error messages
+except Exception, e:
+    report.write("UpdateCache script failed: \n")
+    report.write(e.message)
+    print ("Failed: " + e.message)
+
+#Complete all writes to the log file by closing it
+report.close()
