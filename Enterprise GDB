@@ -1,0 +1,31 @@
+#Name: createGDB.py
+#Description: Creates the internal EGDB and populates it with data
+
+#Import system modules
+import arcpy, os
+import sys, traceback
+
+#Get parameters
+dbPlatform = arcpy.GetParameterAsText(0)
+instance = arcpy.GetParameterAsText(1)
+keycodes = arcpy.GetParameterAsText(2)
+dataSource = arcpy.GetParameterAsText(3)
+
+arcpy.env.workspace = dataSource
+
+#Create enterprise geodatabase (EGDB)
+arcpy.CreateEnterpriseGeodatabase_management(dbPlatform, instance, "Naperville", "OPERATING_SYSTEM_AUTH", "", "", "SDE_SCHEMA", "sde", "gis12345", "", keycodes)
+arcpy.AddMessage("Enterprise Geodatabased created")
+
+#Create EGDB geodatabase connection
+outWorkspace = arcpy.CreateDatabaseConnection_management(r"C:\Student\AGSA\DataStore", "Naperville.sde", dbPlatform, instance, "OPERATING_SYSTEM_AUTH", "", "", "SAVE_USERNAME", "Naperville", "", "", "", "")
+
+#Retrieve EGDB connection file path from the workspace object
+outDatabase = outWorkspace.getOutput(0)
+
+#List feature classes in source FGDB and copy them to the new EGDB
+for fc in arcpy.ListFeatureClasses():
+    desc = arcpy.Describe(fc)
+    arcpy.AddMessage('    Copying "{0}" of type "{1}"'.format(fc, desc.shapeType))
+    outpath = r"{0}\{1}".format(outDatabase,fc)
+    arcpy.Copy_management(fc, outpath)
