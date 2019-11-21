@@ -1,0 +1,50 @@
+# Name: CalculateField_Random.py
+
+# Import system modules
+import arcpy
+import random
+ 
+# Set environment settings
+arcpy.env.workspace = "C:/data/airport.gdb"
+  
+# Set local variables
+inFeatures = "parcels"
+fieldName = "RndValue"
+expression = "random.randint(0, 10)"
+code_block = "import random"
+ 
+# Execute AddField
+arcpy.AddField_management(inFeatures, fieldName, "LONG")
+ 
+# Execute CalculateField 
+arcpy.CalculateField_management(inFeatures, fieldName, expression, "PYTHON3", 
+                                code_block)
+.....................................................................................
+# Name: CalculateField_ranges.py
+
+# Import system modules
+import arcpy
+ 
+# Set environment settings
+arcpy.env.workspace = "C:/data/airport.gdb"
+ 
+# Set local variables
+inTable = "parcels"
+fieldName = "areaclass"
+expression = "getClass(float(!SHAPE.area!))"
+
+codeblock = """
+def getClass(area):
+    if area <= 1000:
+        return 1
+    if area > 1000 and area <= 10000:
+        return 2
+    else:
+        return 3"""
+ 
+# Execute AddField
+arcpy.AddField_management(inTable, fieldName, "SHORT")
+ 
+# Execute CalculateField 
+arcpy.CalculateField_management(inTable, fieldName, expression, "PYTHON3", 
+                                codeblock)
